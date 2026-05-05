@@ -17,42 +17,34 @@ from core_utils.constants import CRAWLER_CONFIG_PATH
 
 class IncorrectSeedURLError(Exception):
     'Seed URL does not match standard pattern "https?://(www.)"'
-    pass
 
 
 class NumberOfArticlesOutOfRangeError(Exception):
     "Total number of articles is out of range from 1 to 150"
-    pass
 
 
 class IncorrectNumberOfArticlesError(Exception):
     "Total number of articles to parse is not integer or less than 0"
-    pass
 
 
 class IncorrectHeadersError(Exception):
     "Headers are not in a form of dictionary"
-    pass
 
 
 class IncorrectEncodingError(Exception):
     "Encoding must be specified as a string"
-    pass
 
 
 class IncorrectTimeoutError(Exception):
     "Timeout value must be a positive integer less than 60"
-    pass
 
 
 class IncorrectVerifyError(Exception):
     "Verify certificate value is not boolean."
-    pass
 
 
 class IncorrectHeadlessModeError(Exception):
     "Headless mode value is not boolean."
-    pass
 
 
 class Config:
@@ -68,6 +60,7 @@ class Config:
             path_to_config (pathlib.Path): Path to configuration.
         """
         self.path_to_config = path_to_config
+        self._config = self._validate_config_content()
 
     def _extract_config_content(self) -> ConfigDTO:
         """
@@ -94,9 +87,11 @@ class Config:
         Ensure configuration parameters are not corrupt.
         """
         cfg = self._extract_config_content()
-        if not cfg.seed_urls or not all(u.startswith(('http://', 'https://')) for u in cfg.seed_urls):
+        if not cfg.seed_urls or not all(u.startswith(('http://', 'https://'))
+                                 for u in cfg.seed_urls):
             raise IncorrectSeedURLError()
-        if not isinstance(cfg.total_articles_to_find_and_parse, int) or not (1 <= cfg.total_articles_to_find_and_parse <= 150):
+        if not isinstance(cfg.total_articles_to_find_and_parse, int) \
+        or not (1 <= cfg.total_articles_to_find_and_parse <= 150):
             raise NumberOfArticlesOutOfRangeError()
         if not isinstance(cfg.headers, dict):
             raise IncorrectHeadersError()
@@ -126,7 +121,7 @@ class Config:
         Returns:
             int: Total number of articles to scrape
         """
-        return self._config.total_articles
+        return self._config.total_articles_to_find_and_parse
 
     def get_headers(self) -> dict[str, str]:
         """
