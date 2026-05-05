@@ -6,6 +6,7 @@ Crawler implementation.
 import datetime
 import json
 import pathlib
+import re
 
 import requests
 from bs4 import BeautifulSoup, Tag
