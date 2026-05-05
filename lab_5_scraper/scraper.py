@@ -61,7 +61,7 @@ class Config:
             path_to_config (pathlib.Path): Path to configuration.
         """
         self.path_to_config = path_to_config
-        self._config = self._validate_config_content()
+        self._validate_config_content()
 
     def _extract_config_content(self) -> ConfigDTO:
         """
@@ -75,7 +75,7 @@ class Config:
 
         return ConfigDTO(
             seed_urls=config_data["seed_urls"],
-            total_articles_to_find_and_parse=config_data["total_articles_to_find_and_parse"],
+            total_articles=config_data["total_articles_to_find_and_parse"],
             headers=config_data["headers"],
             encoding=config_data["encoding"],
             timeout=config_data["timeout"],
@@ -91,8 +91,8 @@ class Config:
         if not cfg.seed_urls or not all(u.startswith(('http://', 'https://'))
                                  for u in cfg.seed_urls):
             raise IncorrectSeedURLError()
-        if not isinstance(cfg.total_articles_to_find_and_parse, int) \
-        or not (1 <= cfg.total_articles_to_find_and_parse <= 150):
+        if not isinstance(cfg.total_articles, int) \
+        or not (1 <= cfg.total_articles <= 150):
             raise NumberOfArticlesOutOfRangeError()
         if not isinstance(cfg.headers, dict):
             raise IncorrectHeadersError()
@@ -104,7 +104,7 @@ class Config:
             raise IncorrectVerifyError()
         if not isinstance(cfg.headless_mode, bool):
             raise IncorrectHeadlessModeError()
-        return cfg
+        self._config = cfg
 
     def get_seed_urls(self) -> list[str]:
         """
@@ -122,7 +122,7 @@ class Config:
         Returns:
             int: Total number of articles to scrape
         """
-        return self._config.total_articles_to_find_and_parse
+        return self._config.total_articles
 
     def get_headers(self) -> dict[str, str]:
         """
