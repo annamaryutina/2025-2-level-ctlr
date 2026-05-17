@@ -1,9 +1,9 @@
 {
     "seed_urls": ["https://old.mxat.ru/press/2025/"],
-    "headers": {"user-agent": "Mozilla/5.0"},
+    "headers": {"User-Agent": "Mozilla/5.0"},
     "total_articles_to_find_and_parse": 100,
     "encoding": "utf-8",
     "timeout": 60,
     "should_verify_certificate": true,
-    "headless_mode": false
+    "headless_mode": true
 }
