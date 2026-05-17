@@ -98,7 +98,7 @@ class Config:
         """
         with open(self.path_to_config, 'r', encoding='utf-8') as file:
             config_data = json.load(file)
-        return ConfigDTO(**data)
+        return ConfigDTO(**config_data)
 
     def _validate_config_content(self) -> None:
         """
