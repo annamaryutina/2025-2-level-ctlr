@@ -253,15 +253,11 @@ class Crawler:
         """
         Find articles.
         """
-        to_visit = list(self.config.get_seed_urls())
-        visited = set()
-        while to_visit and len(self.urls) < self.config.get_num_articles():
-            current_url = to_visit.pop(0)
-            if current_url in visited:
-                continue
-            visited.add(current_url)
+        for seed_url in self.config.get_seed_urls():
+            if len(self.urls) >= self.config.get_num_articles():
+                return
             try:
-                response = make_request(current_url, self.config)
+                response = make_request(seed_url, self.config)
                 if not response.ok:
                     continue
                 soup = BeautifulSoup(response.text, "lxml")
@@ -270,23 +266,16 @@ class Crawler:
                     if not href:
                         continue
                     full_url = self._extract_url(tag)
-                    if not full_url:
+                    if not full_url.startswith("https://old.mxat.ru/"):
                         continue
-                    if full_url.endswith('/') and '/press/' in full_url:
-                        if full_url not in visited:
-                            to_visit.append(full_url)
-                        continue
-                    if '/press/' not in full_url:
-                        continue
-                    if '?' in full_url:
-                        continue
-                    if any(word in full_url.lower() for word in ['search', 'page', 'award', 'english']):
-                        continue
-                    if full_url not in self.urls:
-                        self.urls.append(full_url)
-                        print(f"Found article {len(self.urls)}: {full_url}")
-                        if len(self.urls) >= self.config.get_num_articles():
-                            return
+                    if not full_url.endswith("/") and "/press/" in full_url:
+                        if any(word in full_url.lower() for word in ["search", "page", "award", "english"]):
+                            continue
+                        if full_url not in self.urls:
+                            self.urls.append(full_url)
+                            print(f"Found article {len(self.urls)}: {full_url}")
+                            if len(self.urls) >= self.config.get_num_articles():
+                                return
             except (requests.RequestException, AttributeError, ValueError):
                 continue
 
